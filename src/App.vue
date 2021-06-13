@@ -1,5 +1,5 @@
 <template>
-  <form id="form" name="form">
+  <form @submit.prevent = 'submitHandler' id="form" name="form">
     <p>
       <span class="must-mark"> * </span> <i>Поле обязательное для заполнения</i>
     </p>
@@ -15,9 +15,11 @@
             required
           />
         </label>
+        <!-- v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}" -->
         <label class="required">
           <input
-            v-model="name"
+            v-model.trim="name"
+            v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}"
             type="text"
             name="name"
             class="name"
@@ -25,6 +27,7 @@
             required
           />
         </label>
+        <p>{{name}}</p>
         <label class="optional">
           <input
             type="text"
@@ -186,20 +189,41 @@
         />
       </label>
     </fieldset>
-    <p class="success-sent d-none">Hовый клиент успешно создан</p>
-    <button @submit.prevent = 'showSuccess' type="submit" class="btn submit">Отправить</button>
+    <!-- <p v-bind:class="{ 'd-none': hidden}" class="success-sent">Hовый клиент успешно создан</p> -->
+    <message v-bind:class="{ 'd-none': hidden}"></message>
+    <button type="submit" class="btn submit">Отправить</button>
   </form>
 </template>
 
 <script>
-import { required, minLength } from 'vuelidate/lib/validators'
+import message from './message.vue'
+// import { required, minLength } from 'vuelidate/lib/validators'
+import { required, minLength } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
+
+// import { reactive, toRefs } from "@vue/composition-api";
+
 export default {
   name: "App",
+    components: {
+    message
+  },
   data() {
     return { 
-      name: null
+      name: "my name",
+      hidden: true,
     };
   },
+  // setup(){
+  //   const state = reactive({
+  //     email: "",
+  //     password: ""
+  //   });
+  //   return {
+  //     ...toRefs(state)
+  //   };
+  // },
+  setup: () => ({ v$: useVuelidate() }),
   validations: {
     name: {
       required,
@@ -207,11 +231,16 @@ export default {
     }
   },
   methods: {
-    showSuccess() {
+    submitHandler() {
       console.log('click');
+      this.hidden = false;
+      setTimeout(() => {
+        this.hidden = true;
+    }, 5000);
     }
   }
 };
+
 </script>
 
 <style src='./css/style.css'></style>

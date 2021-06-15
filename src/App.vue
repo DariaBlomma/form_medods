@@ -6,7 +6,25 @@
     <fieldset class="common-info">
       <legend>Общая информация</legend>
       <div class="common-info-inputs">
-        <label class="required">
+        <!-- v-model.trim="v$.name.$model"    -->
+        <label class="required" v-for='item in nameInputs' :key='item.name'>
+          <input
+            @blur='this.v$.$touch'
+            type="text"
+            :name=item.name
+            v-model="v$.name.$model"
+            :class="[item.class, {invalid: v$.name.$error}]"
+            :placeholder=item.placeholder
+            required
+          />
+        </label>
+        <p 
+          v-for="error of v$.$errors"
+          :key="error.$uid"
+        >
+        <strong class="error-message">{{ error.$message }}</strong>
+        </p>
+        <!-- <label class="required">
           <input
             type="text"
             name="surname"
@@ -14,20 +32,25 @@
             placeholder="Фамилия"
             required
           />
-        </label>
+        </label> -->
         <!-- v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}" -->
+        <!-- @blur="v$.name.$touch" -->
         <label class="required">
           <input
-            v-model.trim="name"
-            v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}"
+            v-model.trim="v$.name.$model"    
+            @blur='this.v$.$touch'
             type="text"
-            name="name"
-            class="name"
+            :class="{name, invalid: v$.name.$error}"
             placeholder="Имя"
             required
           />
         </label>
-        <p>{{name}}</p>
+        <p
+          v-for="error of v$.$errors"
+          :key="error.$uid"
+        >
+        <strong class="error-message">{{ error.$message }}</strong>
+        </p>
         <label class="optional">
           <input
             type="text"
@@ -198,39 +221,60 @@
 <script>
 import message from './message.vue'
 // import { required, minLength } from 'vuelidate/lib/validators'
-import { required, minLength } from '@vuelidate/validators'
-import { useVuelidate } from '@vuelidate/core'
-
 // import { reactive, toRefs } from "@vue/composition-api";
+import { useVuelidate } from '@vuelidate/core'
+import { required, minLength, maxLength, helpers} from '@vuelidate/validators'
+
+const ruLetters = helpers.regex('alpha', /[А-я\s.]/ig);
 
 export default {
   name: "App",
     components: {
     message
   },
+  setup: () => ({ v$: useVuelidate() }),
   data() {
     return { 
-      name: "my name",
+      name: "",
+      surname: '',
+      valName: '',
       hidden: true,
+      namesMinLength: 2,
+      nameInputs: [
+        { 
+          valName: 'surname',
+          name: "surname",
+          class: "surname",
+          placeholder: "Фамилия",
+        },
+        { 
+          valName: this.name,
+          name: "name",
+          class: "name",
+          placeholder: 'Имя'
+        }
+      ],
+      valNames: ['surname', this.name]
     };
   },
-  // setup(){
-  //   const state = reactive({
-  //     email: "",
-  //     password: ""
-  //   });
-  //   return {
-  //     ...toRefs(state)
-  //   };
-  // },
-  setup: () => ({ v$: useVuelidate() }),
-  validations: {
-    name: {
-      required,
-      minLength: minLength(2)
+  validations() {
+    return { 
+      name: { 
+        required: helpers.withMessage('Это поле не может быть пустым', required),
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      }
     }
   },
   methods: {
+    defineModel() {
+      this.nameInputs.forEach(item => {
+console.log('item.valName: ', item.valName);
+          return item.valName
+          
+      })
+    },
     submitHandler() {
       console.log('click');
       this.hidden = false;

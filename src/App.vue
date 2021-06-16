@@ -87,7 +87,7 @@
           >
           <strong class="error-message">{{ error.$message }}</strong>
         </p>
-        <label class="required birthdate">
+        <label ref='birthdateLabel' class="required birthdate">
           Дата рождения
           <!-- <input type='date' name='birthdate' class='birthdate' placeholder='Дата рождения' required> -->
           <input
@@ -95,6 +95,7 @@
             @blur='v$.birthdate.$touch'
             type="text"
             name="birthdate"
+            ref='birthdate'
             :class="['birthdate', {invalid: v$.birthdate.$error}]"
             style='margin-bottom: 10px'
             placeholder="Дата рождения"
@@ -110,10 +111,10 @@
         <!-- подумать над регялркой для телефона или маской -->
         <label class="required">
           <input
-            v-model.trim="v$.phone.$model"
+            v-model.trim="phone"
             @blur='v$.phone.$touch'
             type="tel"
-            :class="{phone, invalid: v$.phone.$error}"
+            :class="['phone', {invalid: v$.phone.$error}]"
             placeholder="Номер телефона"
             required
           />
@@ -334,14 +335,14 @@
           data-about=''
         />
       </label>
-      <strong v-if='check' class="error-message">{{ msgRuLetters }}</strong>
+      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.passOrg.$errors"
         :key="error.$uid"
       >
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
-      <label style='margin-bottom: 10px' class="required pass-date-label">
+      <label ref='passDateLabel' style='margin-bottom: 10px' class="required pass-date-label">
         Дата выдачи
         <!-- <input type='date' name='pass-date' class='pass-date' placeholder='Дата выдачи' required> -->
         <input       
@@ -349,6 +350,7 @@
           @blur='v$.passDate.$touch'
           type="text"
           name="pass-date"
+          ref='passDate'
           :class="['pass-date', {invalid: v$.passDate.$error}]"
           placeholder="Дата выдачи"
           required
@@ -369,15 +371,12 @@
 
 <script>
 import message from './message.vue'
-// import { required, minLength } from 'vuelidate/lib/validators'
-// import { reactive, toRefs } from "@vue/composition-api";
+
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, maxLength, helpers} from '@vuelidate/validators'
-// import { helpers } from 'vuelidate/lib/validators'
 
-// проверить регулярку на русские буквы и телефон
+import Inputmask from "inputmask";
 
-const phoneReg = helpers.regex('numeric', /\+7([\s()-]*\d){10}/g);
 
 export default {
   name: "App",
@@ -404,8 +403,8 @@ export default {
       passDate: '',
       valName: '',
       msgRuLetters: '',
-      blurText: '',
       hidden: true,
+      selector: '',
       nameInputs: [
         { 
           valName: 'surname',
@@ -444,7 +443,6 @@ export default {
       },
       phone: {
         required: helpers.withMessage('Это поле не может быть пустым', required),
-        phoneReg: helpers.withMessage('Начните с +7', phoneReg),
       },
       index: {
         minLength: helpers.withMessage('Введите не менее 6 символов', minLength(6)),
@@ -506,6 +504,21 @@ export default {
         }
     }
     },
+    changeLabel(input, label, text, classToRemove) {
+      if (input.type === 'text') {
+        label.innerHTML = label.innerHTML.replace(text, '');
+        label.classList.remove(classToRemove);
+        this.typeText = true;
+      }
+    },
+    checkType() {
+        this.changeLabel(this.$refs.birthdate, this.$refs.birthdateLabel, 'Дата рождения', 'birthdate');
+        this.changeLabel(this.$refs.passDate, this.$refs.passDateLabel, 'Дата выдачи', 'pass-date-label');
+        Inputmask({"mask": "99/99/9999"}).mask('.birthdate');
+        Inputmask({"mask": "99/99/9999"}).mask('.pass-date');
+        Inputmask({"mask": "+7 (999) 999 99-99"}).mask('.phone');
+    },
+
     // onBlur($event) {
     //   const target = $event.target;
       
@@ -523,6 +536,9 @@ export default {
         this.hidden = true;
     }, 5000);
     }
+  },
+  mounted() {
+    this.checkType();
   }
 };
 

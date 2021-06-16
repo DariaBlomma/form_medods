@@ -11,6 +11,7 @@
     "@vuelidate/core": "^2.0.0-alpha.19",
     "@vuelidate/validators": "^2.0.0-alpha.17",
     "core-js": "^3.6.5",
+    "inputmask": "^5.0.6",
     "vue": "^3.0.0",
     "vuelidate": "^0.7.6"
   },

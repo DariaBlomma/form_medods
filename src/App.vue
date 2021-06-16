@@ -9,76 +9,114 @@
         <!-- v-model.trim="v$.name.$model"    -->
         <label class="required" v-for='item in nameInputs' :key='item.name'>
           <input
-            @blur='this.v$.$touch'
+            v-on:input='onInput'
+            @blur='onBlur'
             type="text"
             :name=item.name
-            v-model="v$.name.$model"
+            v-model=item.valName
             :class="[item.class, {invalid: v$.name.$error}]"
             :placeholder=item.placeholder
+            :data-about=item.valName
             required
           />
         </label>
+        <strong class="error-message">{{ msgRuLetters }}</strong>
+        <strong class="error-message">{{ blurText }}</strong>
         <p 
           v-for="error of v$.$errors"
           :key="error.$uid"
         >
         <strong class="error-message">{{ error.$message }}</strong>
         </p>
-        <!-- <label class="required">
+
+        <label class="required">
           <input
+            v-model.trim="v$.surname.$model"    
+            @blur='v$.surname.$touch'
             type="text"
             name="surname"
-            class="surname"
+            :class="['surname', {invalid: v$.surname.$error}]"
             placeholder="Фамилия"
             required
           />
-        </label> -->
+        </label>
+        <p
+          v-for="error of v$.surname.$errors"
+          :key="error.$uid"
+        >
+        <strong  class="error-message">{{ error.$message }}</strong>
+        </p>
         <!-- v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}" -->
         <!-- @blur="v$.name.$touch" -->
         <label class="required">
           <input
             v-model.trim="v$.name.$model"    
-            @blur='this.v$.$touch'
+            @blur='v$.name.$touch'
             type="text"
-            :class="{name, invalid: v$.name.$error}"
+            :class="['name', {invalid: v$.name.$error}]"
             placeholder="Имя"
             required
           />
         </label>
-        <p
-          v-for="error of v$.$errors"
+          <p
+          v-for="error of v$.name.$errors"
           :key="error.$uid"
-        >
-        <strong class="error-message">{{ error.$message }}</strong>
-        </p>
+          >
+          <strong class="error-message">{{ error.$message }}</strong>
+          </p>
+
         <label class="optional">
           <input
+            v-model.trim="v$.patronym.$model"    
+            @blur='v$.patronym.$touch'
             type="text"
             name="patronym"
-            class="patronym"
+            :class="['patronym', {invalid: v$.patronym.$error}]"
             placeholder="Отчество"
           />
         </label>
+        <p
+          v-for="error of v$.patronym.$errors"
+          :key="error.$uid"
+          >
+          <strong class="error-message">{{ error.$message }}</strong>
+        </p>
         <label class="required birthdate">
           Дата рождения
           <!-- <input type='date' name='birthdate' class='birthdate' placeholder='Дата рождения' required> -->
           <input
+            v-model.trim="v$.birthdate.$model"
+            @blur='v$.birthdate.$touch'
             type="text"
             name="birthdate"
-            class="birthdate"
+            :class="['birthdate', {invalid: v$.birthdate.$error}]"
             placeholder="Дата рождения"
             required
           />
         </label>
+        <p
+          v-for="error of v$.birthdate.$errors"
+          :key="error.$uid"
+        >
+        <strong  class="error-message">{{ error.$message }}</strong>
+        </p>
+        <!-- подумать над регялркой для телефона или маской -->
         <label class="required">
           <input
+            v-model.trim="v$.phone.$model"
+            @blur='v$.phone.$touch'
             type="tel"
-            name="phone"
-            class="phone"
+            :class="{phone, invalid: v$.phone.$error}"
             placeholder="Номер телефона"
             required
           />
         </label>
+        <p
+          v-for="error of v$.phone.$errors"
+          :key="error.$uid"
+        >
+        <strong  class="error-message">{{ error.$message }}</strong>
+        </p>
       </div>
       <div class="gender-wrapper">
         <h3>Пол</h3>
@@ -133,38 +171,102 @@
       <legend>Адрес</legend>
       <label class="optional">
         <input
+          v-model.trim="v$.index.$model"
+          @blur='v$.index.$touch'
           type="number"
           name="index"
-          class="index length6"
+          :class="['index', {invalid: v$.index.$error}]"
           placeholder="Индекс"
         />
       </label>
+      <p
+        v-for="error of v$.index.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
         <input
+          v-model.trim="v$.country.$model"
+          @blur='v$.country.$touch'
           type="text"
           name="country"
-          class="country"
+          :class="['country', {invalid: v$.country.$error}]" 
           placeholder="Страна"
         />
       </label>
+      <p
+        v-for="error of v$.country.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
-        <input type="text" name="area" class="area" placeholder="Область" />
+        <input 
+        v-model.trim="v$.area.$model"
+        @blur='v$.area.$touch'
+        type="text" 
+        name="area" 
+        :class="['area', {invalid: v$.area.$error}]" 
+        placeholder="Область" />
       </label>
+      <p
+        v-for="error of v$.area.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="required">
         <input
+          v-model.trim="v$.city.$model"
+          @blur='v$.city.$touch'
           type="text"
           name="city"
-          class="city"
+          :class="['city', {invalid: v$.city.$error}]"
           placeholder="Город"
           required
         />
       </label>
+      <p
+        v-for="error of v$.city.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
-        <input type="text" name="street" class="street" placeholder="Улица" />
+        <input 
+        v-on:input='onInput'
+        v-model.trim="street"
+        @blur='v$.street.$touch'
+        type="text" 
+        name="street" 
+        :class="['street', {invalid: v$.street.$error}]"
+        placeholder="Улица" />
       </label>
+      <strong  class="error-message">My reg {{ msgRuLetters }}</strong>
+      <p
+        v-for="error of v$.street.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
-        <input type="number" name="house" class="house" placeholder="Дом" />
+        <input 
+        v-on:input='onInput'
+        v-model.trim="house"
+        @blur='v$.house.$touch'
+        type="number" 
+        name="house" 
+        :class="['house', {invalid: v$.house.$error}]"
+        placeholder="Дом" />
       </label>
+      <strong  class="error-message">{{ msgRuLetters }}</strong>
+      <p
+        v-for="error of v$.house.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
     </fieldset>
     <fieldset class="pass-group">
       <legend>Паспорт</legend>
@@ -178,39 +280,71 @@
       </div>
       <label class="optional">
         <input
+          v-model.trim="passSerie"
+          @blur='v$.passSerie.$touch'
           type="number"
           name="pass-serie"
-          class="pass-serie"
+          :class="['pass-serie', {invalid: v$.passSerie.$error}]"
           placeholder="Серия"
         />
       </label>
+      <p
+        v-for="error of v$.passSerie.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
         <input
+          v-model.trim="passNumber"
+          @blur='v$.passNumber.$touch'
           type="number"
           name="pass-number"
-          class="pass-number length6"
+          :class="['pass-number', {invalid: v$.passNumber.$error}]"
           placeholder="Номер"
         />
       </label>
+      <p
+        v-for="error of v$.passNumber.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="optional">
         <input
+          v-model.trim="passOrg"
+          @blur='v$.passOrg.$touch'
           type="text"
           name="pass-org"
-          class="pass-org"
+          :class="['pass-org', {invalid: v$.passOrg.$error}]"
           placeholder="Кем выдан"
         />
       </label>
+      <p
+        v-for="error of v$.passOrg.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
       <label class="required pass-date-label">
         Дата выдачи
         <!-- <input type='date' name='pass-date' class='pass-date' placeholder='Дата выдачи' required> -->
-        <input
+        <input       
+          v-model.trim="v$.passDate.$model"
+          @blur='v$.passDate.$touch'
           type="text"
           name="pass-date"
-          class="pass-date"
+          :class="['pass-date', {invalid: v$.passDate.$error}]"
           placeholder="Дата выдачи"
           required
         />
       </label>
+      <p
+        v-for="error of v$.passDate.$errors"
+        :key="error.$uid"
+      >
+        <strong  class="error-message">{{ error.$message }}</strong>
+      </p>
     </fieldset>
     <!-- <p v-bind:class="{ 'd-none': hidden}" class="success-sent">Hовый клиент успешно создан</p> -->
     <message v-bind:class="{ 'd-none': hidden}"></message>
@@ -224,8 +358,12 @@ import message from './message.vue'
 // import { reactive, toRefs } from "@vue/composition-api";
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength, maxLength, helpers} from '@vuelidate/validators'
+// import { helpers } from 'vuelidate/lib/validators'
 
+// проверить регулярку на русские буквы и телефон
 const ruLetters = helpers.regex('alpha', /[А-я\s.]/ig);
+const alpha = helpers.regex('alpha', /^[a-zA-Z]*$/);
+const phoneReg = helpers.regex('numeric', /\+7([\s()-]*\d){10}/g);
 
 export default {
   name: "App",
@@ -237,9 +375,23 @@ export default {
     return { 
       name: "",
       surname: '',
+      patronym: '',
+      phone: '',
+      birthdate: '',
+      index: '',
+      country: '',
+      area: '',
+      city: '',
+      street: '',
+      house: '',
+      passSerie: '',
+      passNumber: '',
+      passOrg: '',
+      passDate: '',
       valName: '',
+      msgRuLetters: '',
+      blurText: '',
       hidden: true,
-      namesMinLength: 2,
       nameInputs: [
         { 
           valName: 'surname',
@@ -259,23 +411,107 @@ export default {
   },
   validations() {
     return { 
+      surname: {
+        alpha: helpers.withMessage('this is alpha test', alpha),
+        required: helpers.withMessage('Это поле не может быть пустым', required),
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
       name: { 
         required: helpers.withMessage('Это поле не может быть пустым', required),
         ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
         minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
         maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      patronym: {
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      birthdate: {
+        required: helpers.withMessage('Это поле не может быть пустым', required),
+      },
+      phone: {
+        required: helpers.withMessage('Это поле не может быть пустым', required),
+        phoneReg: helpers.withMessage('Начните с +7', phoneReg),
+      },
+      index: {
+        minLength: helpers.withMessage('Введите не менее 6 символов', minLength(6)),
+        maxLength: helpers.withMessage('Введите не более 6 символов', maxLength(6)),
+      },
+      country: {
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      area: {
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      city: {
+        required: helpers.withMessage('Это поле не может быть пустым', required),
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      street: {
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      house: {
+        maxLength: helpers.withMessage('Введите не более 6 символов', maxLength(6)),
+      },
+      passSerie: {
+        minLength: helpers.withMessage('Введите не менее 4 символов', minLength(4)),
+        maxLength: helpers.withMessage('Введите не более 4 символов', maxLength(4)),
+      },
+      passNumber: {
+        minLength: helpers.withMessage('Введите не менее 6 символов', minLength(6)),
+        maxLength: helpers.withMessage('Введите не более 6 символов', maxLength(6)),
+      },
+      passOrg: {
+        ruLetters: helpers.withMessage('Используйте только русские буквы', ruLetters),
+        minLength: helpers.withMessage('Введите не менее 2 символов', minLength(2)),
+        maxLength: helpers.withMessage('Введите не более 50 символов', maxLength(50)),
+      },
+      passDate: {
+        required: helpers.withMessage('Это поле не может быть пустым', required),
       }
     }
   },
   methods: {
-    defineModel() {
-      this.nameInputs.forEach(item => {
-console.log('item.valName: ', item.valName);
-          return item.valName
-          
-      })
+    // дописать реализацию по инпуту - замена нежелательных символов, вывод ошибок
+    onInput(event) {
+      const target = event.target;
+      console.log('target', target.value);
+          const test = /[А-я\s.]/ig.test(target.value);
+    if (test) {
+        target.classList.add('valid');
+        this.msgRuLetters = '';
+    } else {
+        if (target.value !== '') {
+            target.classList.add('invalid');
+            this.msgRuLetters = 'Используйте только русские буквы';
+            target.value = '';
+        } else {
+          this.msgRuLetters = '';
+        }
+    }
+    },
+    onBlur(event) {
+      const target = event.target;
+      
+      const valDataset = target.dataset.about;
+      console.log('val: ', valDataset);
+      this.v$.valDataset.$touch();
     },
     submitHandler() {
+      if (this.v$.error) {
+        return;
+      }
       console.log('click');
       this.hidden = false;
       setTimeout(() => {

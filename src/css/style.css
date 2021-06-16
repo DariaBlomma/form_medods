@@ -125,11 +125,14 @@ input.valid {
   margin-bottom: 0;
   font-size: 12px; }
 
-.success-sent {
+.success-sent, .valMistakes {
   color: green;
   grid-area: e;
   margin: auto;
   margin-top: 10px; }
+
+.valMistakes {
+  color: red; }
 
 .d-none {
   display: none; }

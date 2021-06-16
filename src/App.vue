@@ -6,29 +6,6 @@
     <fieldset class="common-info">
       <legend>Общая информация</legend>
       <div class="common-info-inputs">
-        <!-- v-model.trim="v$.name.$model"    -->
-        <!-- <label class="required" v-for='item in nameInputs' :key='item.name'>
-          <input
-            v-on:input='onInput'
-            @blur='onBlur'
-            type="text"
-            :name=item.name
-            v-model=item.valName
-            :class="[item.class, {invalid: v$.name.$error}]"
-            :placeholder=item.placeholder
-            :data-about=item.valName
-            required
-          />
-        </label>
-        <strong class="error-message">{{ msgRuLetters }}</strong>
-        <strong class="error-message">{{ blurText }}</strong>
-        <p 
-          v-for="error of v$.$errors"
-          :key="error.$uid"
-        >
-        <strong class="error-message">{{ error.$message }}</strong>
-        </p> -->
-
         <label class="required">
           <input
             @input='onInput'
@@ -36,32 +13,28 @@
             @blur='v$.surname.$touch'
             type="text"
             name="surname"
-            :class="['surname', {invalid: v$.surname.$error}]"
+            :class="['surname', {invalid: v$.surname.$error}, {valid: !v$.surname.$error && surname !== ''}]"
             placeholder="Фамилия"
             required
           />
         </label>
-        <strong class="error-message">{{ msgRuLetters }}</strong>
         <p
           v-for="error of v$.surname.$errors"
           :key="error.$uid"
         >
         <strong  class="error-message">{{ error.$message }}</strong>
         </p>
-        <!-- v-bind:class="{invalid: $v.name.$dirty && !$v.name.required}" -->
-        <!-- @blur="v$.name.$touch" -->
         <label class="required">
           <input
             @input='onInput'
             v-model.trim="name"    
             @blur='v$.name.$touch'
             type="text"
-            :class="['name', {invalid: v$.name.$error}]"
+            :class="['name', {invalid: v$.name.$error}, {valid: !v$.name.$error && name !== ''}]"
             placeholder="Имя"
             required
           />
         </label>
-        <strong class="error-message">{{ msgRuLetters }}</strong>
           <p
           v-for="error of v$.name.$errors"
           :key="error.$uid"
@@ -73,14 +46,13 @@
           <input
             @input='onInput'
             v-model.trim="patronym"    
-            @blur='v$.patronym.$touch'
+            @blur='v$.patronym.$touch, dateInputsCheck'
             type="text"
             name="patronym"
-            :class="['patronym', {invalid: v$.patronym.$error}]"
+            :class="['patronym', {invalid: v$.patronym.$error}, {valid: !v$.patronym.$error && patronym !== ''}]"
             placeholder="Отчество"
           />
         </label>
-        <strong class="error-message">{{ msgRuLetters }}</strong>
         <p
           v-for="error of v$.patronym.$errors"
           :key="error.$uid"
@@ -89,15 +61,13 @@
         </p>
         <label ref='birthdateLabel' class="required birthdate">
           Дата рождения
-          <!-- <input type='date' name='birthdate' class='birthdate' placeholder='Дата рождения' required> -->
           <input
             v-model.trim="birthdate"
             @blur='v$.birthdate.$touch'
-            type="text"
+            type="date"
             name="birthdate"
             ref='birthdate'
-            :class="['birthdate', {invalid: v$.birthdate.$error}]"
-            style='margin-bottom: 10px'
+            :class="['birthdate', {invalid: v$.birthdate.$error}, {valid: !v$.birthdate.$error && birthdate !== ''}]"
             placeholder="Дата рождения"
             required
           />
@@ -108,12 +78,12 @@
         >
         <strong  class="error-message">{{ error.$message }}</strong>
         </p>
-        <!-- подумать над регялркой для телефона или маской -->
         <label class="required">
           <input
             v-model.trim="phone"
-            @blur='v$.phone.$touch'
+            @blur='v$.phone.$touch, maskInputsCheck'
             type="tel"
+            ref='phone'
             :class="['phone', {invalid: v$.phone.$error}]"
             placeholder="Номер телефона"
             required
@@ -161,7 +131,7 @@
           <option selected>ОМС</option>
         </select>
       </div>
-      <div style='margin-bottom: 10px' class="doctor-wrapper">
+      <div class="doctor-wrapper">
         <h3>Лечащий врач</h3>
         <select name="doctor" class="doctor">
           <option selected>Иванов</option>
@@ -183,8 +153,7 @@
           @blur='v$.index.$touch'
           type="number"
           name="index"
-          :class="['index', {invalid: v$.index.$error}]"
-          style='margin-bottom: 10px'
+          :class="['index', {invalid: v$.index.$error}, {valid: !v$.index.$error && index !== ''}]"
           placeholder="Индекс"
         />
       </label>
@@ -201,11 +170,10 @@
           @blur='v$.country.$touch'
           type="text"
           name="country"
-          :class="['country', {invalid: v$.country.$error}]" 
+          :class="['country', {invalid: v$.country.$error}, {valid: !v$.country.$error && country !== ''}]" 
           placeholder="Страна"
         />
       </label>
-      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.country.$errors"
         :key="error.$uid"
@@ -219,10 +187,9 @@
         @blur='v$.area.$touch'
         type="text" 
         name="area" 
-        :class="['area', {invalid: v$.area.$error}]" 
+        :class="['area', {invalid: v$.area.$error}, {valid: !v$.area.$error && area !== ''}]" 
         placeholder="Область" />
       </label>
-      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.area.$errors"
         :key="error.$uid"
@@ -236,12 +203,11 @@
           @blur='v$.city.$touch'
           type="text"
           name="city"
-          :class="['city', {invalid: v$.city.$error}]"
+          :class="['city', {invalid: v$.city.$error}, {valid: !v$.city.$error && city !== ''}]"
           placeholder="Город"
           required
         />
       </label>
-      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.city.$errors"
         :key="error.$uid"
@@ -255,10 +221,9 @@
         @blur='v$.street.$touch'
         type="text" 
         name="street" 
-        :class="['street', {invalid: v$.street.$error}]"
+        :class="['street', {invalid: v$.street.$error}, {valid: !v$.street.$error && street !== ''}]"
         placeholder="Улица" />
       </label>
-      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.street.$errors"
         :key="error.$uid"
@@ -271,7 +236,7 @@
         @blur='v$.house.$touch'
         type="number" 
         name="house" 
-        :class="['house', {invalid: v$.house.$error}]"
+        :class="['house', {invalid: v$.house.$error}, {valid: !v$.house.$error && house !== ''}]"
         placeholder="Дом" />
       </label>
       <p
@@ -283,21 +248,25 @@
     </fieldset>
     <fieldset class="pass-group">
       <legend>Паспорт</legend>
-      <div style='margin-bottom: 10px' class="document-wrapper">
+      <div  class="document-wrapper">
         <h3 class="required">Тип документа</h3>
-        <select class="document-type" name="document-type" required>
+        <select 
+        ref='docType' 
+        class="document-type"
+        name="document-type" 
+        required>
           <option selected>Паспорт</option>
           <option>Свидетельство о рождении</option>
           <option>Вод. удостоверение</option>
         </select>
       </div>
-      <label style='margin-bottom: 10px' class="optional">
+      <label class="optional">
         <input
           v-model.trim="passSerie"
           @blur='v$.passSerie.$touch'
           type="number"
           name="pass-serie"
-          :class="['pass-serie', {invalid: v$.passSerie.$error}]"
+          :class="['pass-serie', {invalid: v$.passSerie.$error}, {valid: !v$.passSerie.$error && passSerie !== ''}]"
           placeholder="Серия"
         />
       </label>
@@ -307,13 +276,13 @@
       >
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
-      <label style='margin-bottom: 10px' class="optional">
+      <label class="optional">
         <input
           v-model.trim="passNumber"
           @blur='v$.passNumber.$touch'
           type="number"
           name="pass-number"
-          :class="['pass-number', {invalid: v$.passNumber.$error}]"
+          :class="['pass-number', {invalid: v$.passNumber.$error}, {valid: !v$.passNumber.$error && passNumber !== ''}]"
           placeholder="Номер"
         />
       </label>
@@ -323,35 +292,33 @@
       >
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
-      <label style='margin-bottom: 10px' class="optional">
+      <label class="optional">
         <input
           @input='onInput'
           v-model.trim="passOrg"
           @blur='v$.passOrg.$touch'
           type="text"
           name="pass-org"
-          :class="['pass-org', {invalid: v$.passOrg.$error}]"
+          :class="['pass-org', {invalid: v$.passOrg.$error}, {valid: !v$.passOrg.$error && passOrg !== ''}]"
           placeholder="Кем выдан"
           data-about=''
         />
       </label>
-      <strong  class="error-message">{{ msgRuLetters }}</strong>
       <p
         v-for="error of v$.passOrg.$errors"
         :key="error.$uid"
       >
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
-      <label ref='passDateLabel' style='margin-bottom: 10px' class="required pass-date-label">
+      <label ref='passDateLabel' class="required pass-date-label">
         Дата выдачи
-        <!-- <input type='date' name='pass-date' class='pass-date' placeholder='Дата выдачи' required> -->
         <input       
           v-model.trim="passDate"
           @blur='v$.passDate.$touch'
-          type="text"
+          type="date"
           name="pass-date"
           ref='passDate'
-          :class="['pass-date', {invalid: v$.passDate.$error}]"
+          :class="['pass-date', {invalid: v$.passDate.$error}, {valid: !v$.passDate.$error && passDate !== ''}]"
           placeholder="Дата выдачи"
           required
         />
@@ -363,7 +330,7 @@
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
     </fieldset>
-    <!-- <p v-bind:class="{ 'd-none': hidden}" class="success-sent">Hовый клиент успешно создан</p> -->
+    <p v-bind:class="{ 'd-none': !valMistakes}" class="valMistakes">Заполните все поля корректно</p>
     <message v-bind:class="{ 'd-none': hidden}"></message>
     <button type="submit" class="btn submit">Отправить</button>
   </form>
@@ -377,7 +344,7 @@ import { required, minLength, maxLength, helpers} from '@vuelidate/validators'
 
 import Inputmask from "inputmask";
 
-
+// дата рождения с типом дата не отображается, привязать класс динамически
 export default {
   name: "App",
     components: {
@@ -401,25 +368,9 @@ export default {
       passNumber: '',
       passOrg: '',
       passDate: '',
-      valName: '',
-      msgRuLetters: '',
       hidden: true,
-      selector: '',
-      nameInputs: [
-        { 
-          valName: 'surname',
-          name: "surname",
-          class: "surname",
-          placeholder: "Фамилия",
-        },
-        { 
-          valName: this.name,
-          name: "name",
-          class: "name",
-          placeholder: 'Имя'
-        }
-      ],
-      valNames: ['surname', this.name]
+      valMistakes: false,
+      inputsValid: false,
     };
   },
   validations() {
@@ -486,56 +437,85 @@ export default {
     }
   },
   methods: {
-    // дописать реализацию по инпуту - замена нежелательных символов, вывод ошибок
+    markValid(event) {
+      event.target.classList.remove('invalid');
+      event.target.classList.add('valid');
+      this.inputsValid = true;
+    },
+    markInvalid(event) {
+      event.target.classList.remove('valid');
+      event.target.classList.add('invalid');
+      this.inputsValid = false;
+      this.renderErrorMessage(event.target, 'Заполните это поле', 'masked');
+    },
     onInput(event) {
       const target = event.target;
-      console.log('target', target.value);
-          const test = /[А-я\s.]/ig.test(target.value);
-    if (test) {
-        target.classList.add('valid');
-        this.msgRuLetters = '';
-    } else {
-        if (target.value !== '') {
-            target.classList.add('invalid');
-            this.msgRuLetters = 'Используйте только русские буквы';
-            target.value = '';
-        } else {
-          this.msgRuLetters = '';
-        }
-    }
+      const test = /[А-я\s.]/ig.test(target.value);
+      if (test) {
+          target.classList.add('valid');
+      } else {
+        const message = target.parentNode.nextElementSibling;
+          if (target.value !== '') {
+              target.classList.add('invalid');
+              target.value = '';
+              if (message === null || !message.classList.contains('ru')) {
+                  this.renderErrorMessage(target, 'Используйте только русские буквы', 'ru');
+              }
+          }
+      }
+    },
+    renderErrorMessage(elem, text, type) {
+      elem.classList.add('invalid');
+      elem.classList.remove('valid');
+      const strong = document.createElement('strong');
+      strong.className = `error-message ${type}`;
+      strong.textContent = text;
+      elem.parentNode.insertAdjacentElement('afterend', strong);
+      setTimeout(() => {
+          strong.remove();
+          elem.classList.remove('invalid');
+      }, 5000);
     },
     changeLabel(input, label, text, classToRemove) {
       if (input.type === 'text') {
         label.innerHTML = label.innerHTML.replace(text, '');
+        console.log('label.innerHTML: ', label.innerHTML);
         label.classList.remove(classToRemove);
-        this.typeText = true;
       }
     },
     checkType() {
         this.changeLabel(this.$refs.birthdate, this.$refs.birthdateLabel, 'Дата рождения', 'birthdate');
         this.changeLabel(this.$refs.passDate, this.$refs.passDateLabel, 'Дата выдачи', 'pass-date-label');
-        Inputmask({"mask": "99/99/9999"}).mask('.birthdate');
-        Inputmask({"mask": "99/99/9999"}).mask('.pass-date');
-        Inputmask({"mask": "+7 (999) 999 99-99"}).mask('.phone');
-    },
 
-    // onBlur($event) {
-    //   const target = $event.target;
-      
-    //   const valDataset = target.dataset.about;
-    //   console.log('val: ', valDataset);
-    //   this.v$.valDataset.$touch();
-    // },
+        Inputmask("99/99/9999", {
+          'oncomplete': this.markValid,
+          'onincomplete': this.markInvalid
+          })
+        .mask('.birthdate');
+
+        Inputmask("99/99/9999", {
+          'oncomplete': this.markValid,
+          'onincomplete': this.markInvalid
+          })
+        .mask('.pass-date');
+
+        Inputmask("+7 (999) 999 99-99", {
+          'oncomplete': this.markValid,
+          'onincomplete': this.markInvalid
+          })
+          .mask('.phone');
+    },
     submitHandler() {
-      if (this.v$.error) {
+      if (this.v$.error || this.inputsValid === false) {
+        this.valMistakes = true;
         return;
       }
-      console.log('click');
+      this.valMistakes = false;
       this.hidden = false;
       setTimeout(() => {
         this.hidden = true;
     }, 5000);
-    }
+    }, 
   },
   mounted() {
     this.checkType();

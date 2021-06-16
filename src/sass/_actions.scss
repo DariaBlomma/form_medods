@@ -44,13 +44,16 @@ input.valid {
     font-size: $small;
 }
 
-.success-sent {
+.success-sent, .valMistakes {
     color: $green;
     grid-area: e;
     margin: auto;
     margin-top: $margin-normal;
 }
 
+.valMistakes {
+    color: $red;
+}
 .d-none {
     display: none;
 }

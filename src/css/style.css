@@ -68,7 +68,7 @@ label.required, label.optional {
 .optional::after {
   visibility: hidden; }
 
-label.birthdate, label.pass-date-label {
+label.birthdateLabel, label.pass-date-label {
   display: grid;
   grid-template-areas: 'a c' 'b b';
   padding-right: 8px;
@@ -77,7 +77,7 @@ label.birthdate, label.pass-date-label {
 input[placeholder='Дата рождения'], input[placeholder='Дата выдачи'] {
   grid-area: b; }
 
-.birthdate::after, .pass-date-label::after {
+.birthdateLabel::after, .pass-date-label::after {
   grid-area: c;
   justify-self: end; }
 

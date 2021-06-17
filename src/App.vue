@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent = 'submitHandler' id="form" name="form">
+  <form @submit.prevent = 'submitHandler' id="form" name="form" ref='mainForm'>
     <p>
       <span class="must-mark"> * </span> <i>Поле обязательное для заполнения</i>
     </p>
@@ -59,7 +59,7 @@
           >
           <strong class="error-message">{{ error.$message }}</strong>
         </p>
-        <label ref='birthdateLabel' class="required birthdate">
+        <label ref='birthdateLabel' :class="['required', {'birthdateLabel': dateType}]">
           Дата рождения
           <input
             v-model.trim="birthdate"
@@ -310,7 +310,7 @@
       >
         <strong  class="error-message">{{ error.$message }}</strong>
       </p>
-      <label ref='passDateLabel' class="required pass-date-label">
+      <label ref='passDateLabel' :class="['required', {'pass-date-label': dateType}]">
         Дата выдачи
         <input       
           v-model.trim="passDate"
@@ -344,7 +344,6 @@ import { required, minLength, maxLength, helpers} from '@vuelidate/validators'
 
 import Inputmask from "inputmask";
 
-// дата рождения с типом дата не отображается, привязать класс динамически
 export default {
   name: "App",
     components: {
@@ -368,6 +367,7 @@ export default {
       passNumber: '',
       passOrg: '',
       passDate: '',
+      dateType: true,
       hidden: true,
       valMistakes: false,
       inputsValid: false,
@@ -478,13 +478,13 @@ export default {
     },
     changeLabel(input, label, text, classToRemove) {
       if (input.type === 'text') {
+        this.dateType = false;
         label.innerHTML = label.innerHTML.replace(text, '');
-        console.log('label.innerHTML: ', label.innerHTML);
         label.classList.remove(classToRemove);
       }
     },
     checkType() {
-        this.changeLabel(this.$refs.birthdate, this.$refs.birthdateLabel, 'Дата рождения', 'birthdate');
+        this.changeLabel(this.$refs.birthdate, this.$refs.birthdateLabel, 'Дата рождения', 'birthdateLabel');
         this.changeLabel(this.$refs.passDate, this.$refs.passDateLabel, 'Дата выдачи', 'pass-date-label');
 
         Inputmask("99/99/9999", {
@@ -512,13 +512,38 @@ export default {
       }
       this.valMistakes = false;
       this.hidden = false;
+      // чтобы не выводил так ошибки в обязательных полях
+      this.v$.$reset();
+      const allInputs = this.$refs.mainForm.querySelectorAll('input');
+      allInputs.forEach(item => {      
+      this.name = null,
+      this.surname = '',
+      this.patronym = '',
+      this.phone = '',
+      this.birthdate = '',
+      this.index = '',
+      this.country = '',
+      this.area = '',
+      this.city = '',
+      this.street = '',
+      this.house = '',
+      this.passSerie = '',
+      this.passNumber = '',
+      this.passOrg = '',
+      this.passDate = '',
+        
+      item.classList.remove('valid');
+      });
       setTimeout(() => {
         this.hidden = true;
-    }, 5000);
+      }, 5000);
+      
+
     }, 
   },
   mounted() {
     this.checkType();
+
   }
 };
 

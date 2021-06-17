@@ -100,6 +100,7 @@
         <h3>Пол</h3>
         <p>
           <input
+            ref='male'
             type="radio"
             name="gender"
             class="male"
@@ -120,6 +121,7 @@
       <div class="group-select">
         <h3 class="required">Группа клиентов</h3>
         <select
+          ref='clientGroupSelect'
           name="client-group"
           class="client-group"
           multiple
@@ -133,7 +135,7 @@
       </div>
       <div class="doctor-wrapper">
         <h3>Лечащий врач</h3>
-        <select name="doctor" class="doctor">
+        <select ref='doctorSelect' name="doctor" class="doctor">
           <option selected>Иванов</option>
           <option>Захаров</option>
           <option>Чернышева</option>
@@ -142,18 +144,19 @@
 
       <label for="sms" class="sms-label">
         Не отправлять СМС
-        <input type="checkbox" name="sms" id="sms" />
+        <input ref='sms' type="checkbox" name="sms" id="sms" />
       </label>
     </fieldset>
     <fieldset class="address-group">
       <legend>Адрес</legend>
       <label class="optional">
         <input
+          @input='lengthCheck'
           v-model.trim="index"
           @blur='v$.index.$touch'
           type="number"
           name="index"
-          :class="['index', {invalid: v$.index.$error}, {valid: !v$.index.$error && index !== ''}]"
+          :class="['index', {invalid: v$.index.$error}, {valid: length6Valid && index !== ''}]"
           placeholder="Индекс"
         />
       </label>
@@ -262,11 +265,12 @@
       </div>
       <label class="optional">
         <input
+          @input='lengthCheck'
           v-model.trim="passSerie"
           @blur='v$.passSerie.$touch'
           type="number"
           name="pass-serie"
-          :class="['pass-serie', {invalid: v$.passSerie.$error}, {valid: !v$.passSerie.$error && passSerie !== ''}]"
+          :class="['pass-serie', {invalid: v$.passSerie.$error}, {valid: length4Valid}]"
           placeholder="Серия"
         />
       </label>
@@ -278,11 +282,12 @@
       </p>
       <label class="optional">
         <input
+          @input='lengthCheck'
           v-model.trim="passNumber"
           @blur='v$.passNumber.$touch'
           type="number"
           name="pass-number"
-          :class="['pass-number', {invalid: v$.passNumber.$error}, {valid: !v$.passNumber.$error && passNumber !== ''}]"
+          :class="['pass-number', {invalid: v$.passNumber.$error}, {valid: length6PassValid}]"
           placeholder="Номер"
         />
       </label>
@@ -371,6 +376,9 @@ export default {
       hidden: true,
       valMistakes: false,
       inputsValid: false,
+      length4Valid: false,
+      length6Valid: false,
+      length6PassValid: false,
     };
   },
   validations() {
@@ -464,6 +472,18 @@ export default {
           }
       }
     },
+    lengthCheck(event) {
+      const target = event.target;
+      if (target.classList.contains('pass-serie')) {
+        this.length4Valid = target.value.length === 4;
+      }
+      if (target.classList.contains('pass-number')) {
+        this.length6PassValid = target.value.length === 6;
+      }
+      if (target.classList.contains('index')) {
+        this.length6Valid = target.value.length === 6;
+      }
+    },
     renderErrorMessage(elem, text, type) {
       elem.classList.add('invalid');
       elem.classList.remove('valid');
@@ -534,6 +554,14 @@ export default {
         
       item.classList.remove('valid');
       });
+      // радио кнопки с выбором пола
+      this.$refs.male.checked = true;
+      // sms checkbox
+      this.$refs.sms.checked = false;
+      // select doctor
+      this.$refs.doctorSelect.selectedIndex = 0;
+      // client group Select
+      this.$refs.clientGroupSelect.selectedIndex = 2;
       setTimeout(() => {
         this.hidden = true;
       }, 5000);
@@ -543,7 +571,6 @@ export default {
   },
   mounted() {
     this.checkType();
-
   }
 };
 

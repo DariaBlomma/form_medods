@@ -1,4 +1,6 @@
 <template>
+  <div class='wrapper'>
+    <h3 style='display: flex; justify-content: center'>Новый клиент</h3>
   <form @submit.prevent = 'submitHandler' id="form" name="form" ref='mainForm'>
     <p>
       <span class="must-mark"> * </span> <i>Поле обязательное для заполнения</i>
@@ -339,6 +341,7 @@
     <message v-bind:class="{ 'd-none': hidden}"></message>
     <button type="submit" class="btn submit">Отправить</button>
   </form>
+  </div>
 </template>
 
 <script>

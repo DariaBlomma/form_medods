@@ -1,4 +1,5 @@
 # form
+has travis automatized
 
 ## Project setup
 ```
